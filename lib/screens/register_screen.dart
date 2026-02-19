@@ -1,23 +1,19 @@
-
 import 'package:demo_app/services/auth_service.dart';
-
 import 'package:flutter/material.dart';
 
-class SigninScreen extends StatefulWidget {
-  const SigninScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<SigninScreen> createState() => _SigninScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  bool hidePassword = true;
   String email = '';
   String password = '';
-
-  bool hidePassword = true;
-  final AuthService _auth = AuthService();
+  final  AuthService _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,26 +31,26 @@ class _SigninScreenState extends State<SigninScreen> {
               Container(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                
+
                   children: [
                     Hero(
                       tag: "coffee",
-                
+
                       child: Icon(Icons.coffee, size: 100, color: Colors.brown),
                     ),
-                
+
                     SizedBox(height: 15),
-                
+
                     Text(
                       "Brew Crew",
-                
+
                       style: TextStyle(
                         fontSize: 32,
-                
+
                         fontWeight: FontWeight.bold,
-                
+
                         color: Colors.brown,
-                
+
                         letterSpacing: 2,
                       ),
                     ),
@@ -70,54 +66,54 @@ class _SigninScreenState extends State<SigninScreen> {
                   ),
                   child: Form(
                     key: _formKey,
-                
+
                     child: Column(
                       children: [
                         /// EMAIL FIELD
                         TextFormField(
                           decoration: InputDecoration(
                             labelText: "Email",
-                
+
                             prefixIcon: Icon(Icons.email),
-                
+
                             border: OutlineInputBorder(),
                           ),
-                
+
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Enter email";
                             }
-                
+
                             return null;
                           },
-                
+
                           onChanged: (value) {
-                           setState(() {
+                            setState(() {
                               email = value;
-                           });
+                            });
                           },
                         ),
-                
+
                         SizedBox(height: 20),
-                
+
                         /// PASSWORD FIELD
                         TextFormField(
                           obscureText: hidePassword,
-                
+
                           decoration: InputDecoration(
                             labelText: "Password",
-                
+
                             prefixIcon: Icon(Icons.lock),
-                
+
                             border: OutlineInputBorder(),
-                
+
                             suffixIcon: IconButton(
                               icon: Icon(
                                 hidePassword
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                               ),
-                
+
                               onPressed: () {
                                 setState(() {
                                   hidePassword = !hidePassword;
@@ -125,30 +121,30 @@ class _SigninScreenState extends State<SigninScreen> {
                               },
                             ),
                           ),
-                
+
                           validator: (value) {
                             if (value!.length < 6) {
                               return "Enter 6+ characters";
                             }
-                
+
                             return null;
                           },
-                
+
                           onChanged: (value) {
-                           setState(() {
+                            setState(() {
                               password = value;
-                           });
+                            });
                           },
                         ),
-                
+
                         SizedBox(height: 20),
-                
+
                         /// LOGIN BUTTON
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                           ),
-                
+
                           onPressed: () async {
                             // await _auth.signinAnon();
                             if (_formKey.currentState!.validate()) {
@@ -156,7 +152,7 @@ class _SigninScreenState extends State<SigninScreen> {
                               print(password);
                             }
                           },
-                
+
                           child: Text(
                             "Login",
                             style: TextStyle(color: Colors.brown),
