@@ -1,4 +1,5 @@
 import 'package:demo_app/model/user.dart';
+import 'package:demo_app/screens/signin_screen.dart';
 import 'package:demo_app/screens/splash_screen.dart';
 import 'package:demo_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -12,16 +13,28 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final VoidCallback? toggleView;
+
+  const MyApp({super.key, this.toggleView});
 
   @override
   Widget build(BuildContext context) {
     return StreamProvider<UserId?>.value(
+      //
       value: AuthService().user,
-       initialData: null,
+      initialData: null,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SplashScreen()
+        home: SplashScreen(
+          toggleView: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SigninScreen(toggleView: toggleView ?? () {}),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

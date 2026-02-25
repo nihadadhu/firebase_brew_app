@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                   value: 'logout',
                   child: TextButton(
                     onPressed: () async {
-                      await _auth.signOut();
+                      await _auth.signOut();// Sign out the user when "Logout" is pressed
                     },
                     child: Text(
                       "Logout",

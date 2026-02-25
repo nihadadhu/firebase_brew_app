@@ -1,11 +1,15 @@
 import 'dart:ui';
+import 'package:demo_app/screens/signin_screen.dart';
 import 'package:demo_app/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
+
+  const SplashScreen({super.key, required this.toggleView});
+  final Function toggleView;
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState(); 
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -49,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen>
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => Wrapper()),
+        MaterialPageRoute(builder: (_) => SigninScreen(toggleView: widget.toggleView)),
       );
     }
   }
@@ -80,7 +84,7 @@ class _SplashScreenState extends State<SplashScreen>
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
 
-                  child: Container(
+                  child: Container(   
                     padding: EdgeInsets.symmetric(horizontal: 40, vertical: 30),
 
                     decoration: BoxDecoration(

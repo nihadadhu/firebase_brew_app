@@ -1,19 +1,24 @@
+import 'dart:ffi';
+
+import 'package:demo_app/screens/signin_screen.dart';
 import 'package:demo_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({super.key, required this.toggleView});
+  final Function toggleView;
+  
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();// Create a GlobalKey to identify the form and validate it later.
   bool hidePassword = true;
   String email = '';
   String password = '';
-  final  AuthService _auth = AuthService();
+  final  AuthService _auth = AuthService();// Create an instance of AuthService to handle authentication operations
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -41,8 +46,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     SizedBox(height: 15),
 
+                    // Text(
+                    //   "Brew Crew",
+
+                    //   style: TextStyle(
+                    //     fontSize: 32,
+
+                    //     fontWeight: FontWeight.bold,
+
+                    //     color: Colors.brown,
+
+                    //     letterSpacing: 2,
+                    //   ),
+                    // ),
                     Text(
-                      "Brew Crew",
+                      "Create an Account",
 
                       style: TextStyle(
                         fontSize: 32,
@@ -54,6 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         letterSpacing: 2,
                       ),
                     ),
+                    Text("Sign up to get started and get the best \nfrom our app",style: TextStyle(color: Colors.brown[700],fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
                   ],
                 ),
               ),
@@ -62,7 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 20.0,
-                    horizontal: 40.0,
+                    horizontal: 30.0,
                   ),
                   child: Form(
                     key: _formKey,
@@ -76,7 +95,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             prefixIcon: Icon(Icons.email),
 
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
                           ),
 
                           validator: (value) {
@@ -105,7 +126,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                             prefixIcon: Icon(Icons.lock),
 
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
 
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -138,35 +161,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
 
                         SizedBox(height: 20),
+                         
+                        Row(
 
-                        /// LOGIN BUTTON
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                          ),
+                           children: [
+                            Checkbox(
+                              activeColor: Colors.brown,
+                              value: true,
+                              onChanged: (value) {
+                                // Handle checkbox state change if needed
+                              },
+                            ),
+                            Text("I have read and accept the ",
+                            style: TextStyle(color: Colors.grey[700],wordSpacing: 2),),
+                            Text("Privacy Policy",
+                            style: TextStyle(color: Colors.brown,),)
+                           ],
+                        ),
 
-                          onPressed: () async {
-                            // await _auth.signinAnon();
-                            if (_formKey.currentState!.validate()) {
-                              print(email);
-                              print(password);
-                            }
-                          },
-
-                          child: Text(
-                            "Login",
-                            style: TextStyle(color: Colors.brown),
+                        Container(
+                          width: 300,
+                          child: ElevatedButton(
+                          
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                          
+                            onPressed: () async {
+                              // await _auth.signinAnon();
+                              if (_formKey.currentState!.validate()) {
+                                print(email);
+                                print(password);
+                              }
+                            },
+                          
+                            child: Text(
+                              "Sign up",
+                              style: TextStyle(color: Colors.brown,fontWeight: FontWeight.bold,fontSize: 17,letterSpacing: 1),
+                            ),
                           ),
                         ),
-                      ],
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("I'm already a member!",style: TextStyle(color: Colors.brown[700],fontWeight: FontWeight.bold),),
+                              TextButton(onPressed: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SigninScreen(toggleView: widget.toggleView)));
+                        }, child: Text("Sign in",style: TextStyle(color: Colors.brown,))
+
+                      
+                         ) ],
                     ),
-                  ),
+             ] ),
                 ),
               ),
-            ],
+           ) ],
           ),
         ),
       ),
     );
   }
 }
+
+
