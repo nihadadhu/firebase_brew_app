@@ -1,36 +1,59 @@
-import 'package:demo_app/model/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../model/user.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;// Create an instance of FirebaseAuth to interact with Firebase Authentication 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth get auth => _auth;
 
-  // create user obj based on firebase user
-  UserId? _userFromFirebaseUSer(User? user) {
+  // Convert Firebase user to our app user
+  UserId? _userFromFirebaseUser(User? user) {
     return user != null ? UserId(uid: user.uid) : null;
   }
 
-  //auth change user stream
+  // Auth change user stream
   Stream<UserId?> get user {
-    return _auth.authStateChanges().map(_userFromFirebaseUSer);
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
-  //This function signs in anonymously using FirebaseAuth and returns the logged-in user.
-  Future<UserId?> signinAnon() async {
+  // Register with email & password
+  Future<UserId?> registerWithEmailAndPass(
+  String username,
+  String email,
+  String password,
+) async {
+  try {
+    UserCredential result = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    User? user = result.user;
+
+    if (user != null) {
+      await user.updateDisplayName(username);
+    }
+
+    return _userFromFirebaseUser(user);
+  } catch (e) {
+    print(e);
+    return null;
+  }
+}
+
+  // Sign in with email & password
+  Future<UserId?> signInWithEmailAndPass(String email, String password) async {
     try {
-      UserCredential result = await _auth.signInAnonymously();// Sign in anonymously
-      User? user = result.user;
-      return _userFromFirebaseUSer(user);
+      UserCredential result =
+          await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return _userFromFirebaseUser(result.user);
     } catch (e) {
-      print(e.toString());
+      print(e);
       return null;
     }
   }
 
+  // Sign out
   Future signOut() async {
-    try {
-      return await _auth.signOut();// Sign out the user from Firebase Authentication
-    } catch (e) {
-      print(e.toString());
-    }
+    await _auth.signOut();
   }
 }

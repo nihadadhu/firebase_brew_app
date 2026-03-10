@@ -1,29 +1,33 @@
-import 'dart:ffi';
-
 import 'package:demo_app/screens/signin_screen.dart';
 import 'package:demo_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key, required this.toggleView});
-  final Function toggleView;
-  
+  final VoidCallback toggleView;
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _formKey = GlobalKey<FormState>();// Create a GlobalKey to identify the form and validate it later.
+  final _formKey =
+      GlobalKey<
+        FormState
+      >(); // Create a GlobalKey to identify the form and validate it later.
   bool hidePassword = true;
+  String userName = '';
   String email = '';
   String password = '';
-  final  AuthService _auth = AuthService();// Create an instance of AuthService to handle authentication operations
+  bool? checkBoxValue = false;
+  final AuthService _auth =
+      AuthService(); // Create an instance of AuthService to handle authentication operations
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.brown[100],
+        backgroundColor: const Color(0xFFFFFFFF),
         // appBar: AppBar(
         //   backgroundColor: Colors.brown[400],
         //   elevation: 0.0,
@@ -38,10 +42,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   mainAxisSize: MainAxisSize.min,
 
                   children: [
-                    Hero(
-                      tag: "coffee",
-
-                      child: Icon(Icons.coffee, size: 100, color: Colors.brown),
+                    Image.asset(
+                      "assets/images/todo.png",
+                      height: size.height * 0.08,
                     ),
 
                     SizedBox(height: 15),
@@ -63,16 +66,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       "Create an Account",
 
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: 26,
 
                         fontWeight: FontWeight.bold,
 
-                        color: Colors.brown,
+                        color: const Color(0xFF000000),
 
                         letterSpacing: 2,
                       ),
                     ),
-                    Text("Sign up to get started and get the best \nfrom our app",style: TextStyle(color: Colors.brown[700],fontWeight: FontWeight.bold),textAlign: TextAlign.center,),
+                    const Text(
+                      "Sign-up  to get Started and get the best \n from our app",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   ],
                 ),
               ),
@@ -88,6 +95,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     child: Column(
                       children: [
+                        ///USERNAME FIELD
+                        TextFormField(
+  decoration: InputDecoration(
+    labelText: "Username",
+    prefixIcon: Icon(Icons.person),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+  ),
+  validator: (value) {
+    if (value!.isEmpty) {
+      return "Enter username";
+    }
+    return null;
+  },
+  onChanged: (value) {
+    setState(() {
+      userName = value;
+    });
+  },
+),
+SizedBox(height: 20),
                         /// EMAIL FIELD
                         TextFormField(
                           decoration: InputDecoration(
@@ -161,43 +190,63 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
 
                         SizedBox(height: 20),
-                         
-                        Row(
 
-                           children: [
+                        Row(
+                          children: [
                             Checkbox(
-                              activeColor: Colors.brown,
-                              value: true,
+                              activeColor: Colors.green[700],
+                              value: checkBoxValue,
                               onChanged: (value) {
+                                setState(() {
+                                  checkBoxValue = value;
+                                }); // Trigger a rebuild to reflect the change
                                 // Handle checkbox state change if needed
                               },
                             ),
-                            Text("I have read and accept the ",
-                            style: TextStyle(color: Colors.grey[700],wordSpacing: 2),),
-                            Text("Privacy Policy",
-                            style: TextStyle(color: Colors.brown,),)
-                           ],
+                            Text(
+                              "I have read and accept the ",
+                              style: TextStyle(
+                                color: Colors.grey[700],
+                                wordSpacing: 2,
+                              ),
+                            ),
+                            Text(
+                              "Privacy Policy",
+                              style: TextStyle(color: Colors.deepPurple),
+                            ),
+                          ],
                         ),
 
                         Container(
                           width: 300,
                           child: ElevatedButton(
-                          
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                             ),
-                          
+
                             onPressed: () async {
-                              // await _auth.signinAnon();
                               if (_formKey.currentState!.validate()) {
-                                print(email);
-                                print(password);
+                                dynamic user = await _auth
+                                    .registerWithEmailAndPass(userName,email, password);
+
+                                if (user != null) {
+                                  print("Register success");
+                                  // No Navigator.push needed
+                                  // StreamProvider will detect change → Wrapper rebuilds → HomeScreen
+                                } else {
+                                  print("Error registering user");
+                                }
                               }
                             },
-                          
+
                             child: Text(
                               "Sign up",
-                              style: TextStyle(color: Colors.brown,fontWeight: FontWeight.bold,fontSize: 17,letterSpacing: 1),
+                              style: TextStyle(
+                                color: const Color(0xFF000000),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                letterSpacing: 1,
+                              ),
                             ),
                           ),
                         ),
@@ -205,23 +254,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("I'm already a member!",style: TextStyle(color: Colors.brown[700],fontWeight: FontWeight.bold),),
-                              TextButton(onPressed: (){
-                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SigninScreen(toggleView: widget.toggleView)));
-                        }, child: Text("Sign in",style: TextStyle(color: Colors.brown,))
-
-                      
-                         ) ],
+                            Text(
+                              "I'm already a member!",
+                              style: TextStyle(color: const Color(0xFF000000)),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(
+                                      MaterialPageRoute(
+                                        builder: (_) => SigninScreen(
+                                          toggleView: widget.toggleView,
+                                        ),
+                                      ),
+                                    )
+                                    .then(
+                                      (_) => widget.toggleView(),
+                                    ); // ✅ correct
+                              },
+                              child: Text("Sign in"),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-             ] ),
+                  ),
                 ),
               ),
-           ) ],
+            ],
           ),
         ),
       ),
     );
   }
 }
-
-

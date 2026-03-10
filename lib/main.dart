@@ -1,40 +1,41 @@
-import 'package:demo_app/model/user.dart';
-import 'package:demo_app/screens/signin_screen.dart';
-import 'package:demo_app/screens/splash_screen.dart';
-import 'package:demo_app/services/auth_service.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'package:demo_app/provider/task_provder.dart';
+import 'services/auth_service.dart';
+import 'model/user.dart';
+import 'wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final VoidCallback? toggleView;
-
-  const MyApp({super.key, this.toggleView});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<UserId?>.value(
-      //
-      value: AuthService().user,
-      initialData: null,
+
+    return MultiProvider(
+      providers: [
+
+        StreamProvider<UserId?>.value(
+          value: AuthService().user,
+          initialData: null,
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) => TaskProvider(),
+        ),
+
+      ],
+
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SplashScreen(
-          toggleView: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SigninScreen(toggleView: toggleView ?? () {}),
-              ),
-            );
-          },
-        ),
+        home: Wrapper(),
       ),
     );
   }

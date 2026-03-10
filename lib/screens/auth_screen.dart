@@ -18,6 +18,7 @@ class _MyWidgetState extends State<Authentication> {
   void toggleView(){
     setState(() {
       showSignIn = !showSignIn;
+        print("Toggle clicked. showSignIn = $showSignIn");
     });
   }
   @override
